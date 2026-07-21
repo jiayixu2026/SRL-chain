@@ -1,73 +1,98 @@
-# SRL-Chain: Semantic Role–Guided Reasoning Chain for Aspect-Based Sentiment Analysis
+# SRL-Chain: Semantic Role Labeling-Guided Reasoning Chain for Aspect-Based Sentiment Analysis
 
-This repository contains the implementation of **SRL-Chain**, a semantic role-guided reasoning framework for **Aspect-Based Sentiment Analysis (ABSA)**.
+This repository contains the implementation of **SRL-Chain**, a
+**Semantic Role Labeling (SRL)-guided reasoning framework** for
+**Aspect-Based Sentiment Analysis (ABSA)**.
 
-SRL-Chain introduces **Semantic Role Labeling (SRL)** into LLM-based sentiment reasoning and decomposes ABSA into a three-step reasoning chain:
+SRL-Chain introduces **Semantic Role Labeling (SRL)** into LLM-based
+sentiment reasoning and formulates ABSA as a three-step reasoning chain.
+By leveraging predicate-argument structures, SRL-Chain provides explicit
+semantic information for aspect-oriented sentiment analysis.
 
-1. **Semantic Role Analysis**: Identify the semantic structure related to the target aspect.
-2. **Opinion Extraction**: Extract explicit or implicit opinion expressions toward the aspect.
-3. **Sentiment Classification**: Predict the sentiment polarity based on the extracted opinion.
+The framework consists of three steps:
 
----
+1.  **Semantic Role Analysis**\
+    Identify the semantic structure related to the target aspect through
+    SRL representations.
+
+2.  **Opinion Extraction**\
+    Extract explicit or implicit opinion expressions associated with the
+    target aspect.
+
+3.  **Sentiment Classification**\
+    Predict the sentiment polarity based on the extracted opinion
+    information.
+
+------------------------------------------------------------------------
 
 ## Framework Overview
 
-Given a sentence and an aspect term, SRL-Chain first generates an SRL-based semantic representation, then performs step-by-step reasoning for sentiment prediction.
+Given a sentence and an aspect term, SRL-Chain first generates a
+Semantic Role Labeling representation and then performs step-by-step
+reasoning for sentiment prediction.
 
-```
-Sentence + Aspect
-        |
-        v
-Semantic Role Analysis (SRL)
-        |
-        v
-Opinion Extraction
-        |
-        v
-Sentiment Classification
-```
+    Sentence + Aspect
+            |
+            v
+    Semantic Role Analysis (SRL)
+            |
+            v
+    Opinion Extraction
+            |
+            v
+    Sentiment Classification
 
----
+------------------------------------------------------------------------
 
 ## Repository Structure
 
-```
-SRL-Chain-ABSA/
-│
-├── zero_shot_inference.py          # Zero-shot inference pipeline
-├── distill_train_data.py           # Generate distillation data for fine-tuning
-├── srl_processor_AllenNLP_BERT.py  # SRL processing module
-│
-├── core/
-│   ├── api_utils.py                # API and configuration utilities
-│   └── batch_processor.py          # Batch processing and checkpoint recovery
-│
-├── requirements.txt
-├── .env.example
-├── README.md
-└── LICENSE
-```
+    SRL-Chain-ABSA/
 
----
+    ├── zero_shot_inference.py
+    │   └── Zero-shot sentiment classification pipeline
+
+    ├── distill_train_data.py
+    │   └── Generate reasoning-chain data for fine-tuning
+
+    ├── srl_processor_AllenNLP_BERT.py
+    │   └── SRL processing module based on AllenNLP BERT SRL model
+
+    ├── core/
+    │   ├── api_utils.py
+    │   │   └── API calls and configuration utilities
+    │   └── batch_processor.py
+    │       └── Batch processing and checkpoint recovery
+
+    ├── requirements.txt
+    ├── .env.example
+    ├── README.md
+    └── LICENSE
+
+------------------------------------------------------------------------
 
 ## Installation
 
 ### 1. Create environment
 
-```bash
+``` bash
 python -m venv venv
-source venv/bin/activate   # Windows: venv\Scripts\activate
+
+# Windows
+venv\Scripts\activate
+
+# Linux / macOS
+source venv/bin/activate
 ```
 
 ### 2. Install dependencies
 
-```bash
+``` bash
 pip install -r requirements.txt
 ```
 
 ### 3. Download spaCy model
 
-```bash
+``` bash
 python -m spacy download en_core_web_sm
 ```
 
@@ -75,63 +100,65 @@ python -m spacy download en_core_web_sm
 
 Copy `.env.example`:
 
-```bash
+``` bash
 cp .env.example .env
 ```
 
-Then add your OpenAI API key:
+For Windows:
 
+``` bash
+copy .env.example .env
 ```
+
+Then configure:
+
+``` text
 OPENAI_API_KEY=your_api_key
 ```
 
----
+------------------------------------------------------------------------
 
 ## Usage
 
-### Zero-shot inference
+### Zero-shot Inference
 
-Run:
-
-```bash
+``` bash
 python zero_shot_inference.py
 ```
 
-Before running, modify the configuration parameters:
+Before running, modify:
 
-- `DATA_PATH`
-- `MODEL`
-- `SAVE_DIR`
-- `OUTPUT_FILENAME`
+-   `DATA_PATH`
+-   `MODEL`
+-   `SAVE_DIR`
+-   `OUTPUT_FILENAME`
 
----
+### Generate Fine-tuning Data
 
-### Generate fine-tuning data
-
-Run:
-
-```bash
+``` bash
 python distill_train_data.py
 ```
 
-This script uses LLM-based knowledge distillation to generate SRL-Chain reasoning data for downstream fine-tuning.
+This script generates SRL-Chain reasoning data through LLM-based
+knowledge distillation for downstream model fine-tuning.
 
----
+------------------------------------------------------------------------
 
 ## Dataset
 
-Experiments are conducted on standard ABSA datasets:
+SRL-Chain is evaluated on widely used ABSA benchmark datasets:
 
-- Rest14
-- Rest15
-- Rest16
-- Lap14
+-   Rest14
+-   Rest15
+-   Rest16
+-   Lap14
 
-The datasets should be obtained from their original releases and placed under the `data/` directory.
+Datasets should be obtained from their original releases and placed
+under the `data/` directory.
 
 Expected format:
 
-```json
+``` json
 {
   "sentence": "The food was great.",
   "aspect": "food",
@@ -139,21 +166,23 @@ Expected format:
 }
 ```
 
----
+------------------------------------------------------------------------
 
-## Citation
+## Experimental Settings
 
-If you find this repository useful, please cite:
+The framework supports:
 
-```bibtex
-@article{your_paper,
-  title={SRL-Chain: Semantic Role–Guided Reasoning Chain for Aspect-Based Sentiment Analysis},
-  author={Your Name},
-  year={2026}
-}
-```
+-   LLM-based zero-shot inference
+-   LoRA-based fine-tuning
+-   SRL-guided reasoning chain generation
 
----
+Models used in experiments include:
+
+-   GPT-3.5-Turbo
+-   Llama-2-7B-Chat
+-   Llama-3-8B-Instruct
+
+------------------------------------------------------------------------
 
 ## License
 
